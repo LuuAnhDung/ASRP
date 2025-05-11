@@ -63,10 +63,10 @@ with create_app().app_context():
 
     # 6) Seed users (2 admin, 2 user) nếu chưa tồn tại
     users_data = [
-        ("admin1", "admin1@example.com", "admin123", "Admin One", "0900000001", "admin"),
-        ("admin2", "admin2@example.com", "admin123", "Admin Two", "0900000002", "admin"),
-        ("user1",  "user1@example.com",  "user123", "User One",  "0900000003", "user"),
-        ("user2",  "user2@example.com",  "user123", "User Two",  "0900000004", "user"),
+        ("admin1", "admin1@example.com", "admin123", "Admin1", "0900000001", "admin"),
+        ("admin2", "admin2@example.com", "admin123", "Admin2", "0900000002", "admin"),
+        ("user1",  "user1@example.com",  "user123", "User1",  "0900000003", "user"),
+        ("user2",  "user2@example.com",  "user123", "User2",  "0900000004", "user"),
     ]
     for uname, email, pwd, fullname, phone, role in users_data:
         if not User.query.filter_by(email=email).first():
