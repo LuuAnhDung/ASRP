@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    .form-group {
+        margin-bottom: 1.2rem;
+    }
+    .form-label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.6rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    .form-control:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        color: #fff;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+    .text-danger {
+        font-size: 0.875rem;
+        color: red;
+        margin-top: 0.25rem;
+    }
+    .text-muted {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+</style>
+
+<div class="container">
+    <h2>Gửi Báo Cáo Tội Phạm</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            <label class="form-label">{{ form.region_id.label }}</label>
+            {{ form.region_id(class="form-control") }}
+            {% for error in form.region_id.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.specific_address.label }}</label>
+            {{ form.specific_address(class="form-control") }}
+            {% for error in form.specific_address.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- <div class="form-group">
+            <label class="form-label">{{ form.status_id.label }}</label>
+            {{ form.status_id(class="form-control") }}
+            {% for error in form.status_id.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.category_id.label }}</label>
+            {{ form.category_id(class="form-control") }}
+            {% for error in form.category_id.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div> -->
+
+        <div class="form-group">
+            <label class="form-label">{{ form.title.label }}</label>
+            {{ form.title(class="form-control") }}
+            {% for error in form.title.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.content.label }}</label>
+            {{ form.content(rows="4", class="form-control") }}
+            {% for error in form.content.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.informant_name.label }}</label>
+            {{ form.informant_name(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.informant_address.label }}</label>
+            {{ form.informant_address(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.informant_phone.label }}</label>
+            {{ form.informant_phone(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.informant_id_number.label }}</label>
+            {{ form.informant_id_number(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.attachments.label }}</label>
+            <small class="text-muted">(<i>Chỉ chấp nhận tệp .jpg, .png, .pdf, .docx.</i>)</small>
+            {{ form.attachments(class="form-control", multiple=True) }}
+            {% for error in form.attachments.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+
+{% endblock %}

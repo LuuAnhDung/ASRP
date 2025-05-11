@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  .banner {
+    background: url('/static/images/banner.jpg') no-repeat center center/cover;
+    padding: 100px 0;
+    color: white;
+    text-align: center;
+    position: relative;
+  }
+
+  .banner-overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 60px 20px;
+  }
+
+  .banner-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .banner-subtitle {
+    font-size: 1.2rem;
+  }
+
+  .features {
+    padding: 60px 20px;
+    background-color: #f8f9fa;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  .feature-card {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 300px;
+  }
+
+  .feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: #007bff;
+  }
+
+  .btn {
+    margin-top: auto;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    display: inline-block;
+  }
+
+  .btn:hover {
+    background-color: #0056b3;
+  }
+
+  .footer {
+    background-color: #343a40;
+    color: white;
+    padding: 30px 20px;
+    text-align: center;
+  }
+
+  .footer a {
+    color: #ffc107;
+  }
+
+  .footer-container {
+    max-width: 1000px;
+    margin: auto;
+  }
+</style>
+
+<!-- BANNER -->
+<section class="banner">
+  <div class="banner-overlay">
+    <div class="banner-content">
+      <h1 class="banner-title">PHÒNG CHỐNG LỪA ĐẢO TRÊN KHÔNG GIAN MẠNG</h1>
+      <p class="banner-subtitle">Nền tảng tiếp nhận và xử lý các báo cáo về lừa đảo trên không gian mạng</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="container">
+    <h2>Các công cụ nổi bật</h2>
+    <div class="features-grid">
+
+      <!-- Card 1 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <h3>Kiểm tra email/số điện thoại</h3>
+        <p>Công cụ giúp tra cứu email/số điện thoại đã lộ lọt thông tin cá nhân của người dùng.</p>
+        <a href="{{ url_for('main.check_info') }}" class="btn">Truy cập</a>
+      </div>
+
+      <!-- Báo cáo hành vi lừa đảo -->
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-user-secret"></i></div>
+        <h3>Báo cáo Lừa đảo</h3>
+        <p>Gửi thông tin liên quan đến hành vi lừa đảo trên mạng.</p>
+        <a href="{{ url_for('report.crime.add_crime_report') }}" class="btn">Gửi báo cáo</a>
+      </div>
+
+      <!-- Báo cáo Sự việc -->
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <h3>Báo cáo Sự việc</h3>
+        <p>Gửi báo cáo về các sự cố hoặc sự việc liên quan.</p>
+        <a href="{{ url_for('report.incident.add_incident_report') }}" class="btn">Gửi báo cáo</a>
+      </div>
+
+      <!-- Báo cáo Nhóm tội phạm -->
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-users"></i></div>
+        <h3>Báo cáo Nhóm tội phạm</h3>
+        <p>Gửi thông tin về các tổ chức hoặc nhóm tội phạm.</p>
+        <a href="{{ url_for('report.group.add_group_report') }}" class="btn">Gửi báo cáo</a>
+      </div>
+
+      <!-- Yêu cầu Trích xuất Dữ liệu -->
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-database"></i></div>
+        <h3>Yêu cầu Trích xuất</h3>
+        <p>Gửi yêu cầu trích xuất dữ liệu điện tử phục vụ điều tra.</p>
+        <a href="{{ url_for('report.extraction.add_extraction_request') }}" class="btn">Gửi yêu cầu</a>
+      </div>
+
+      <!-- Card (admin only) -->
+      {% if current_user.is_authenticated and current_user.role == 'admin' %}
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-tools"></i>
+        </div>
+        <h3>Quản lý hệ thống</h3>
+        <p>Truy cập vào trang quản trị hệ thống dành riêng cho quản trị viên.</p>
+        <a href="/admin" class="btn">Truy cập</a>
+      </div>
+      {% endif %}
+
+      <!-- Card (police officer only) -->
+      {% if current_user.is_authenticated and current_user.role == 'police_officer' %}
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-clipboard-list"></i>
+        </div>
+        <h3>Quản lý báo cáo</h3>
+        <p>Truy cập vào trang làm việc để theo dõi và xử lý các báo cáo được giao.</p>
+        <a href="{{ url_for('police_officer.view_reports') }}" class="btn">Truy cập</a>
+      </div>
+      {% endif %}
+
+      <!-- Card (statistics - admin or police) -->
+      {% if current_user.is_authenticated and (current_user.role == 'admin' or current_user.role == 'police_officer') %}
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-chart-bar"></i>
+        </div>
+        <h3>Báo cáo Thống kê</h3>
+        <p>Xem và phân tích thống kê các báo cáo đã gửi.</p>
+        <a href="{{ url_for('report.report_statistics') }}" class="btn">Truy cập</a>
+      </div>
+      {% endif %}
+
+      <!-- Card (authenticated users) -->
+      {% if current_user.is_authenticated %}
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-file-alt"></i>
+        </div>
+        <h3>Báo Cáo Của Tôi</h3>
+        <p>Xem và theo dõi trạng thái các báo cáo của bạn.</p>
+        <a href="{{ url_for('report.my_reports') }}" class="btn">Truy cập</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container footer-container">
+    <p>© 2024 - Phòng ANM và PCTP CNC Công an tỉnh Bắc Ninh - <a href="https://pa05bacninh.example/">khonggianmang.vn</a></p>
+    <p>
+      Liên hệ: <a href="mailto:contact@example.com">contact@example.com</a> |
+      Hotline: <a href="tel:+8400000000">+84 0000 0000</a>
+    </p>
+  </div>
+</footer>
+
+{% endblock %}

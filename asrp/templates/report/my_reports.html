@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Báo Cáo Của Tôi</h2>
+
+    <!-- Bảng các báo cáo -->
+    <div class="statistics-table mt-3">
+        <div class="table-row header">
+            <div class="column index">Stt</div>
+            <div class="column title">Tiêu đề</div>
+            <div class="column comment">Danh mục</div>
+            <div class="column module">Khu vực</div>
+            <div class="column reporter">Người báo cáo</div>
+            <div class="column status">Trạng thái</div>
+            <div class="column severity">Mức độ</div>
+            <div class="column date">Tạo</div>
+            <div class="column date">Hạn chót</div>
+        </div>
+
+        {% for report in reports %}
+        <div class="table-row">
+            <div class="column index">{{ loop.index }}</div>
+            <div class="column title">
+                {% if report.crime_report %}
+                    {{ report.crime_report.title }}
+                {% elif report.incident_report %}
+                    {{ report.incident_report.incident_name }}
+                {% elif report.group_report %}
+                    {{ report.group_report.group_name }}
+                {% elif report.extraction_request %}
+                    Yêu cầu số: {{ report.extraction_request.request_number }}
+                {% else %}
+                    Không có tiêu đề
+                {% endif %}
+            </div>
+            <div class="column comment">{{ report.category.name }}</div>
+            <div class="column module">{{ report.region.name }}</div>
+            <div class="column reporter">{{ report.user.full_name }}</div>
+            <div class="column status">
+                <span class="label label-primary">{{ report.status.name }}</span>
+            </div>
+            <div class="column severity">{{ report.group_report.impact_level }}</div>
+            <div class="column date">{{ report.created_at.strftime('%b-%d, %Y') }}</div>
+            <div class="column date">
+                {{ report.due_date.strftime('%b-%d, %Y') if report.due_date else 'N/A' }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

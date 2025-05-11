@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    .form-group {
+        margin-bottom: 1.2rem;
+    }
+    .form-label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.6rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    .form-control:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        color: #fff;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+    .text-muted {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+</style>
+
+<div class="container">
+    <h2>Gửi Yêu Cầu Trích Xuất Dữ Liệu</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            <label class="form-label">{{ form.request_number.label }}</label>
+            {{ form.request_number(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.unit_id.label }}</label>
+            {{ form.unit_id(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.result_date.label }}</label>
+            {{ form.result_date(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.device_type.label }}</label>
+            {{ form.device_type(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.device_info.label }}</label>
+            {{ form.device_info(rows="3", class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.extraction_detail.label }}</label>
+            {{ form.extraction_detail(rows="4", class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.extraction_result.label }}</label>
+            {{ form.extraction_result(rows="3", class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.note.label }}</label>
+            {{ form.note(rows="2", class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.attachments.label }}</label>
+            <small class="text-muted">(<i>Chỉ chấp nhận tệp .jpg, .png, .pdf, .docx. Tối đa 20MB mỗi tệp.</i>)</small>
+            {{ form.attachments(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+
+{% endblock %}

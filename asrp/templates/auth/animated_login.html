@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đăng Nhập - PHÒNG CHỐNG LỪA ĐẢO TRÊN KHÔNG GIAN MẠNG</title>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Source Sans Pro', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(135deg, #2c3e50, #3498db);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo-img {
+      width: 80px;
+      height: auto;
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    form {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      border-radius: 10px;
+      backdrop-filter: blur(8px);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .inputGroup {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input::placeholder {
+      color: #ccc;
+    }
+
+    .helper {
+      font-size: 0.85rem;
+      color: #ddd;
+      margin-top: 0.3rem;
+    }
+
+    .btn {
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #1c5980;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-header">
+    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo-img" />
+    <h2>HỆ THỐNG PHÒNG CHỐNG LỪA ĐẢO TRÊN KHÔNG GIAN MẠNG</h2>
+  </div>
+  <form method="POST" action="{{ url_for('auth.dang_nhap') }}">
+    {{ form.csrf_token }}
+
+    <div class="inputGroup inputGroup1">
+      <label for="email">Email</label>
+      {{ form.email(class="email", id="email", placeholder="Nhập email") }}
+      <p class="helper helper1">email@domain.com</p>
+    </div>
+
+    <div class="inputGroup inputGroup2">
+      <label for="password">Mật khẩu</label>
+      {{ form.password(class="password", id="password", placeholder="Nhập mật khẩu") }}
+    </div>
+
+    <div class="inputGroup inputGroup3">
+      {{ form.submit(class="btn btn-primary", id="login") }}
+    </div>
+  </form>
+</body>
+</html>
