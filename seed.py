@@ -24,7 +24,7 @@ UNITS = [
     ("Công an TP Hải Phòng", "Đảm bảo ANTT Hải Phòng"),
 ]
 
-STATUSES = ["Chưa xử lý", "Đang xử lý", "Đã xử lý", "Đã đóng"]
+STATUSES = ["Chưa xử lý", "Đang xử lý", "Đã xử lý", "Đã đóng", "Đã tiếp nhận", "Đang thực hiện"]
 
 CATEGORIES = [
     "Báo cáo tội phạm", 

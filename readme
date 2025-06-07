@@ -3,6 +3,9 @@
 export FLASK_APP=manage.py
 - Trên Windows (cmd):
 set FLASK_APP=manage.py
+
+- Từ đây
+
 - Trên Windows (PowerShell):
 $env:FLASK_APP = "manage.py"
 
@@ -12,5 +15,6 @@ flask db migrate -m "Initial"
 flask db upgrade
 
 $env:FLASK_APP = "manage.py"
+pip install XlsxWriter
 flask run 
 

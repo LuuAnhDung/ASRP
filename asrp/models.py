@@ -21,8 +21,7 @@ class User(UserMixin, db.Model):
 
     unit = db.relationship('Unit', back_populates='users')
     reports = db.relationship('Report', back_populates='user', lazy='dynamic')
-    extraction_requests = db.relationship('ExtractionRequest', back_populates='requester', lazy='dynamic')
-
+    
     def check_password(self, password):
         return check_password_hash(self.password, password)
 
@@ -98,12 +97,24 @@ class CrimeReport(db.Model):
     __tablename__ = 'bao_cao_toi_pham'
 
     id = db.Column(db.Integer, db.ForeignKey('bao_cao.id'), primary_key=True)
+    case_code = db.Column(db.String(50), nullable=False)  # Mã vụ việc
+    received_date = db.Column(db.Date, nullable=False)  # Ngày tiếp nhận
+    officer_name = db.Column(db.String(150), nullable=False)  # Cán bộ tiếp nhận
+
     title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False)
+    
     informant_name = db.Column(db.String(150))
     informant_address = db.Column(db.String(255))
     informant_phone = db.Column(db.String(20))
-    informant_id_number = db.Column(db.String(20))
+    
+    status = db.Column(db.String(50), nullable=False)  # Tình trạng xử lý
+
+    phone_numbers = db.Column(db.Text)  # Danh sách SĐT liên quan
+    bank_accounts = db.Column(db.Text)  # Danh sách tài khoản ngân hàng
+    ip_addresses = db.Column(db.Text)  # Thông tin IP
+    websites_or_apps = db.Column(db.Text)  # Website/Ứng dụng
+
 
     report = db.relationship('Report', back_populates='crime_report')
 
@@ -112,10 +123,18 @@ class IncidentReport(db.Model):
     __tablename__ = 'bao_cao_su_viec'
 
     id = db.Column(db.Integer, db.ForeignKey('bao_cao.id'), primary_key=True)
+    file_number = db.Column(db.String(50), nullable=False)  # Số hồ sơ
+    incident_time = db.Column(db.Date, nullable=True)  # Thời gian xảy ra
+
     incident_name = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
-    occurred_at = db.Column(db.DateTime)
-    related_people = db.Column(db.Text)
+    
+    officer_name = db.Column(db.String(150), nullable=False)  # Cán bộ đăng ký
+    status = db.Column(db.String(50), nullable=False)  # Tình trạng xử lý
+
+    related_persons = db.Column(db.Text)  # Người liên quan
+    storage_number = db.Column(db.String(100))  # Số lưu hồ sơ
+    archived_date = db.Column(db.Date) # Ngày nộp lưu
 
     report = db.relationship('Report', back_populates='incident_report')
 
@@ -124,17 +143,47 @@ class GroupReport(db.Model):
     __tablename__ = 'bao_cao_nhom'
 
     id = db.Column(db.Integer, db.ForeignKey('bao_cao.id'), primary_key=True)
+    
     platform = db.Column(db.String(100), nullable=False)
     group_name = db.Column(db.String(200), nullable=False)
     group_url = db.Column(db.String(255))
-    created_at = db.Column(db.DateTime)
+    created_at = db.Column(db.Date, nullable=True)
     admin_info = db.Column(db.Text)
+    
+    member_count = db.Column(db.Integer)  # Số lượng thành viên
+    weekly_post_count = db.Column(db.Integer)  # Số bài tin trung bình mỗi tuần
+    status = db.Column(db.String(50), nullable=False)  # Tình trạng xử lý
+    assigned_officer = db.Column(db.String(150))  # Cán bộ phụ trách theo dõi
+
     purpose = db.Column(db.Text)
-    impact_level = db.Column(db.Integer)
     description = db.Column(db.Text, nullable=False)
+    
     note = db.Column(db.Text)
 
     report = db.relationship('Report', back_populates='group_report')
+
+class ExtractionRequest(db.Model):
+    __tablename__ = 'yeu_cau_trich_xuat'
+
+    id = db.Column(db.Integer, db.ForeignKey('bao_cao.id'), primary_key=True)
+    request_number = db.Column(db.String(50), unique=True, nullable=False)  # Số yêu cầu
+    sent_date = db.Column(db.Date, nullable=False)       # Ngày gửi (chỉ ngày)
+    result_date = db.Column(db.Date)                      # Ngày trả kết quả (chỉ ngày)
+    
+    unit_id = db.Column(db.Integer, db.ForeignKey('don_vi.id'), nullable=False)
+    
+    device_type = db.Column(db.String(100), nullable=False)
+    device_info = db.Column(db.Text, nullable=False)
+    extraction_detail = db.Column(db.Text, nullable=False)
+    extraction_result = db.Column(db.Text)
+    
+    status = db.Column(db.String(50), nullable=False)             # Tình trạng xử lý (mới thêm)
+    receiving_officer = db.Column(db.String(150))                  # Cán bộ tiếp nhận (mới thêm)
+
+    note = db.Column(db.Text)
+
+    report = db.relationship('Report', back_populates='extraction_request')
+    unit = db.relationship('Unit', back_populates='extraction_requests')
 
 
 class Attachment(db.Model):
@@ -149,35 +198,3 @@ class Attachment(db.Model):
     uploaded_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     report = db.relationship('Report', back_populates='attachments')
-
-
-class ExtractionRequest(db.Model):
-    __tablename__ = 'yeu_cau_trich_xuat'
-
-    id = db.Column(db.Integer, db.ForeignKey('bao_cao.id'), primary_key=True)
-    request_number = db.Column(db.String(50), unique=True, nullable=False)
-    requester_id = db.Column(db.Integer, db.ForeignKey('nguoi_dung.id'), nullable=False)
-    unit_id = db.Column(db.Integer, db.ForeignKey('don_vi.id'), nullable=False)
-    result_date = db.Column(db.DateTime)
-    device_type = db.Column(db.String(100), nullable=False)
-    device_info = db.Column(db.Text, nullable=False)
-    extraction_detail = db.Column(db.Text, nullable=False)
-    extraction_result = db.Column(db.Text)
-    note = db.Column(db.Text)
-
-    report = db.relationship('Report', back_populates='extraction_request')
-    requester = db.relationship('User', back_populates='extraction_requests')
-    unit = db.relationship('Unit', back_populates='extraction_requests')
-
-
-class LeakedInfo(db.Model):
-    __tablename__ = 'thong_tin_bi_lo'
-
-    id = db.Column(db.Integer, primary_key=True)
-    contact_info = db.Column(db.String(255), nullable=False)
-    info_type = db.Column(db.String(50), nullable=False)
-    leaked_data = db.Column(db.Text, nullable=True)
-    detected_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    def __repr__(self):
-        return f'<LeakedInfo {self.contact_info} ({self.info_type})>'

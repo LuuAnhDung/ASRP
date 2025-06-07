@@ -1,52 +1,152 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Báo Cáo Của Tôi</h2>
+<style>
+  /* Giới hạn chiều rộng bảng, căn giữa container */
+  .custom-table-container {
+    max-width: 1100px;
+    width: 95%;
+    margin: 40px auto;
+  }
+  /* Bảng có viền bao quanh */
+  table.custom-table {
+    border: 1px solid #dee2e6;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  /* Header có background, viền dưới rõ */
+  table.custom-table thead th {
+    background-color: #033580;
+    color: white;
+    border-bottom: 3px solid #033580;
+    padding: 12px 15px;
+    text-align: center;
+  }
+  /* Các ô trong tbody có viền dưới nhẹ */
+  table.custom-table tbody td,
+  table.custom-table tbody th {
+    border-bottom: 1px solid #dee2e6;
+    padding: 10px 12px;
+  }
+  /* Căn text trái phải hợp lý */
+  table.custom-table tbody td.text-start {
+    text-align: left;
+  }
+  table.custom-table tbody td.text-center {
+    text-align: center;
+  }
+  /* Hover highlight row */
+  table.custom-table tbody tr:hover {
+    background-color: #e9f2ff;
+  }
 
-    <!-- Bảng các báo cáo -->
-    <div class="statistics-table mt-3">
-        <div class="table-row header">
-            <div class="column index">Stt</div>
-            <div class="column title">Tiêu đề</div>
-            <div class="column comment">Danh mục</div>
-            <div class="column module">Khu vực</div>
-            <div class="column reporter">Người báo cáo</div>
-            <div class="column status">Trạng thái</div>
-            <div class="column severity">Mức độ</div>
-            <div class="column date">Tạo</div>
-            <div class="column date">Hạn chót</div>
-        </div>
+  /* Nút thao tác */
+  .action-btn {
+    min-width: 70px;
+    height: 36px;
+    padding: 0 10px;
+    margin: 0 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    gap: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    border: 1.5px solid transparent;
+    text-decoration: none;
+    user-select: none;
+  }
 
+  .action-btn-info {
+    color: #033580;
+    border-color: #033580;
+    background-color: transparent;
+  }
+  .action-btn-info:hover,
+  .action-btn-info:focus {
+    background-color: #033580;
+    color: white;
+    text-decoration: none;
+  }
+
+  .action-btn-download {
+    color: #198754;
+    border-color: #198754;
+    background-color: transparent;
+  }
+  .action-btn-download:hover,
+  .action-btn-download:focus {
+    background-color: #198754;
+    color: white;
+    text-decoration: none;
+  }
+</style>
+
+<div class="custom-table-container">
+  <h2 class="text-center mb-4 fw-bold text-primary">Báo Cáo Của Tôi</h2>
+
+  <div class="table-responsive">
+    <table class="custom-table table align-middle">
+      <thead>
+        <tr>
+          <th scope="col" style="width:5%;">STT</th>
+          <th scope="col" style="width:35%;">Tiêu đề</th>
+          <th scope="col" style="width:15%;">Danh mục</th>
+          <th scope="col" style="width:15%;">Người báo cáo</th>
+          <th scope="col" style="width:10%;">Trạng thái</th>
+          <th scope="col" style="width:15%;">Ngày tạo</th>
+          <th scope="col" style="width:15%;">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
         {% for report in reports %}
-        <div class="table-row">
-            <div class="column index">{{ loop.index }}</div>
-            <div class="column title">
-                {% if report.crime_report %}
-                    {{ report.crime_report.title }}
-                {% elif report.incident_report %}
-                    {{ report.incident_report.incident_name }}
-                {% elif report.group_report %}
-                    {{ report.group_report.group_name }}
-                {% elif report.extraction_request %}
-                    Yêu cầu số: {{ report.extraction_request.request_number }}
-                {% else %}
-                    Không có tiêu đề
-                {% endif %}
-            </div>
-            <div class="column comment">{{ report.category.name }}</div>
-            <div class="column module">{{ report.region.name }}</div>
-            <div class="column reporter">{{ report.user.full_name }}</div>
-            <div class="column status">
-                <span class="label label-primary">{{ report.status.name }}</span>
-            </div>
-            <div class="column severity">{{ report.group_report.impact_level }}</div>
-            <div class="column date">{{ report.created_at.strftime('%b-%d, %Y') }}</div>
-            <div class="column date">
-                {{ report.due_date.strftime('%b-%d, %Y') if report.due_date else 'N/A' }}
-            </div>
-        </div>
+        <tr>
+          <th scope="row" class="text-center">{{ loop.index }}</th>
+          <td class="text-start">
+            {% if report.crime_report %}
+              {{ report.crime_report.title }}
+            {% elif report.incident_report %}
+              {{ report.incident_report.incident_name }}
+            {% elif report.group_report %}
+              {{ report.group_report.group_name }}
+            {% elif report.extraction_request %}
+              Yêu cầu số: {{ report.extraction_request.request_number }}
+            {% else %}
+              <em>Không có tiêu đề</em>
+            {% endif %}
+          </td>
+          <td class="text-center">{{ report.category.name }}</td>
+          <td class="text-center">{{ report.user.full_name }}</td>
+          <td class="text-center">
+            <span class="badge bg-success">{{ report.status.name }}</span>
+          </td>
+          <td class="text-center">{{ report.created_at.strftime('%d-%m-%Y %H:%M') }}</td>
+          <td class="text-center">
+            <a href="{{ url_for('report.views.view_report', id=report.id) }}"
+              class="action-btn action-btn-info"
+              title="Xem chi tiết">
+              <i class="bi bi-eye"></i> Xem
+            </a>
+            {% if report.attachments %}
+            <a href="{{ url_for('report.views.download_attachment', id=report.id) }}"
+              class="action-btn action-btn-download"
+              title="Tải tệp đính kèm">
+              <i class="bi bi-download"></i> Tải về
+            </a>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="7" class="text-center text-muted fst-italic">Chưa có báo cáo nào.</td>
+        </tr>
         {% endfor %}
-    </div>
+      </tbody>
+    </table>
+  </div>
 </div>
+
 {% endblock %}

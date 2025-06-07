@@ -1,141 +1,262 @@
 {% extends "base.html" %}
-{% block content %}
 
+{% block content %}
 <style>
-    .container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 2rem;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h2 {
-        margin-bottom: 1.5rem;
-        text-align: center;
-    }
-    .form-group {
-        margin-bottom: 1.2rem;
-    }
-    .form-label {
-        font-weight: bold;
-        display: block;
-        margin-bottom: 0.5rem;
-    }
-    .form-control {
-        width: 100%;
-        padding: 0.6rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-    .form-control:focus {
-        border-color: #007bff;
-        outline: none;
-    }
-    .btn-primary {
-        background-color: #007bff;
-        border: none;
-        padding: 0.6rem 1.2rem;
-        color: #fff;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    .btn-primary:hover {
-        background-color: #0056b3;
-    }
-    .text-danger {
-        font-size: 0.875rem;
-        color: red;
-        margin-top: 0.25rem;
-    }
-    .text-muted {
-        font-size: 0.875rem;
-        color: #6c757d;
-    }
+  .incident-form-page .container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.1);
+  }
+
+  .incident-form-page .form-header {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: #010204;
+    margin-bottom: 2rem;
+    /* border-bottom: 2px solid #070a0c; */
+    padding-bottom: 0.3rem;
+    /* letter-spacing: 1px; */
+    user-select: none;
+  }
+
+  .incident-form-page form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem 2rem;
+  }
+
+  .incident-form-page .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .incident-form-page label.form-label {
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+
+  .incident-form-page input.form-control,
+  .incident-form-page select.form-control,
+  .incident-form-page textarea.form-control {
+    padding: 0.5rem 0.7rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+  }
+
+  .incident-form-page input.form-control:focus,
+  .incident-form-page select.form-control:focus,
+  .incident-form-page textarea.form-control:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+
+  .incident-form-page .text-danger {
+    color: #d93025;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+  }
+
+  .incident-form-page .text-muted {
+    font-size: 0.8rem;
+    color: #6c757d;
+  }
+
+  .incident-form-page .full-width {
+    grid-column: 1 / -1;
+  }
+
+  .incident-form-page .btn-primary {
+    grid-column: 1 / -1;
+    background-color: #007bff;
+    border: none;
+    padding: 0.7rem 1.3rem;
+    font-size: 1.1rem;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    justify-self: start;
+  }
+
+  .incident-form-page .btn-primary:hover {
+    background-color: #0056b3;
+  }
+
+  .incident-form-page table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2.5rem;
+    font-size: 0.95rem;
+  }
+
+  .incident-form-page th, .incident-form-page td {
+    border: 1px solid #ddd;
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+  }
+
+  .incident-form-page th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+  }
+
+  .incident-form-page .action-btn {
+    padding: 0.3rem 0.7rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-right: 0.4rem;
+  }
+
+  .incident-form-page .btn-edit {
+    background-color: #28a745;
+    color: white;
+  }
+
+  .incident-form-page .btn-edit:hover {
+    background-color: #218838;
+  }
+
+  .incident-form-page .btn-delete {
+    background-color: #dc3545;
+    color: white;
+  }
+
+  .incident-form-page .btn-delete:hover {
+    background-color: #c82333;
+  }
 </style>
 
-<div class="container">
-    <h2>Báo Cáo Sự Việc</h2>
+<div class="incident-form-page">
+  <div class="container">
+    <h2 class="form-header">{{ 'CẬP NHẬT BÁO CÁO VỤ VIỆC' if edit else 'GỬI BÁO CÁO VỤ VIỆC' }}</h2>
+
     <form method="POST" enctype="multipart/form-data">
-        {{ form.hidden_tag() }}
+      {{ form.hidden_tag() }}
 
-        <div class="form-group">
-            <label class="form-label">{{ form.region_id.label }}</label>
-            {{ form.region_id(class="form-control") }}
-            {% for error in form.region_id.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div>
+    <div class="form-group">
+      <label class="form-label">{{ form.file_number.label }}</label>
+      {{ form.file_number(class="form-control") }}
+      {% for error in form.file_number.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
 
-        <div class="form-group">
-            <label class="form-label">{{ form.specific_address.label }}</label>
-            {{ form.specific_address(class="form-control") }}
-            {% for error in form.specific_address.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div>
+    <div class="form-group">
+      <label class="form-label">{{ form.incident_time.label }}</label>
+      {{ form.incident_time(class="form-control") }}
+      {% for error in form.incident_time.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
 
-        <!-- <div class="form-group">
-            <label class="form-label">{{ form.status_id.label }}</label>
-            {{ form.status_id(class="form-control") }}
-            {% for error in form.status_id.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div>
+    <div class="form-group full-width">
+      <label class="form-label">{{ form.incident_name.label }}</label>
+      {{ form.incident_name(class="form-control") }}
+      {% for error in form.incident_name.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
 
-        <div class="form-group">
-            <label class="form-label">{{ form.category_id.label }}</label>
-            {{ form.category_id(class="form-control") }}
-            {% for error in form.category_id.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div> -->
+    <div class="form-group full-width">
+      <label class="form-label">{{ form.description.label }}</label>
+      {{ form.description(rows="4", class="form-control") }}
+      {% for error in form.description.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
 
-        <div class="form-group">
-            <label class="form-label">{{ form.incident_name.label }}</label>
-            {{ form.incident_name(class="form-control") }}
-            {% for error in form.incident_name.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div>
+    <div class="form-group">
+      <label class="form-label">{{ form.officer_name.label }}</label>
+      {{ form.officer_name(class="form-control") }}
+      {% for error in form.officer_name.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
 
-        <div class="form-group">
-            <label class="form-label">{{ form.description.label }}</label>
-            {{ form.description(rows="4", class="form-control") }}
-            {% for error in form.description.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div>
+    <div class="form-group">
+      <label class="form-label">{{ form.status.label }}</label>
+      {{ form.status(class="form-control") }}
+      {% for error in form.status.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
 
-        <div class="form-group">
-            <label class="form-label">{{ form.occurred_at.label }}</label>
-            {{ form.occurred_at(class="form-control") }}
-            {% for error in form.occurred_at.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div>
+    <div class="form-group full-width">
+      <label class="form-label">{{ form.related_persons.label }}</label>
+      {{ form.related_persons(class="form-control") }}
+      {% for error in form.related_persons.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
 
-        <div class="form-group">
-            <label class="form-label">{{ form.related_people.label }}</label>
-            {{ form.related_people(rows="3", class="form-control") }}
-            {% for error in form.related_people.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div>
+    <div class="form-group">
+      <label class="form-label">{{ form.storage_number.label }}</label>
+      {{ form.storage_number(class="form-control") }}
+      {% for error in form.storage_number.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
 
-        <div class="form-group">
-            <label class="form-label">{{ form.attachments.label }}</label>
-            <small class="text-muted">(<i>Chỉ chấp nhận tệp .jpg, .png, .pdf, .docx. Tối đa 20MB mỗi tệp.</i>)</small>
-            {{ form.attachments(class="form-control") }}
-            {% for error in form.attachments.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div>
+    <div class="form-group">
+      <label class="form-label">{{ form.archived_date.label }}</label>
+      {{ form.archived_date(class="form-control") }}
+      {% for error in form.archived_date.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
 
-        <div class="form-group">
-            {{ form.submit(class="btn btn-primary") }}
-        </div>
-    </form>
+    <div class="form-group full-width">
+      <label class="form-label">{{ form.attachments.label }}</label>
+      <small class="text-muted">(<i>Chỉ chấp nhận tệp .jpg, .png, .pdf, .docx.</i>)</small>
+      {{ form.attachments(class="form-control", multiple=True) }}
+      {% for error in form.attachments.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="form-group">
+      {{ form.submit(class="btn btn-primary") }}
+    </div>
+  </form>
+
+  <h3>DANH SÁCH BÁO CÁO VỤ VIỆC</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Số hồ sơ</th>
+          <th>Tên sự việc</th>
+          <th>Thời gian</th>
+          <th>Trạng thái</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for incident in incidents %}
+          <tr>
+            <td>{{ incident.file_number }}</td>
+            <td>{{ incident.incident_name }}</td>
+            <td>{{ incident.incident_time.strftime('%Y-%m-%d') if incident.incident_time else '' }}</td>
+            <td>{{ incident.status }}</td>
+            <td>
+              <a href="{{ url_for('report.incident.edit_incident_report', id=incident.id) }}" class="action-btn btn-edit">Sửa</a>
+              <a href="{{ url_for('report.incident.delete_incident_report', id=incident.id) }}" class="action-btn btn-delete"
+                 onclick="return confirm('Bạn có chắc muốn xóa báo cáo này?');">Xóa</a>
+            </td>
+          </tr>
+        {% else %}
+           <tr>
+                <td colspan="7" style="text-align:center;">Chưa có báo cáo nào.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 </div>
 
 {% endblock %}

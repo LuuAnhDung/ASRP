@@ -1,9 +1,9 @@
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField, PasswordField, SubmitField, TextAreaField,
-    SelectField, FloatField, DateTimeField, BooleanField, HiddenField
+    SelectField, FloatField, DateTimeField, BooleanField, HiddenField, DateField, IntegerField
 )
-from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional
+from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional, NumberRange
 
 
 # ---------- LOGIN ----------
@@ -27,7 +27,7 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Đăng ký')
 
 
-# ---------- GENERIC REPORT ----------
+# ---------- Báo cáo chung ----------
 class ReportForm(FlaskForm):
     area_id = SelectField('Khu vực', coerce=int, validators=[Optional()])
     detailed_address = StringField('Địa chỉ chi tiết', validators=[Optional(), Length(max=255)])
@@ -36,55 +36,121 @@ class ReportForm(FlaskForm):
     submit = SubmitField('Gửi báo cáo')
 
 
-# ---------- CRIME REPORT ----------
+# ---------- BÁO CÁO TỘI PHẠM ----------
 class CrimeReportForm(FlaskForm):
+    case_code = StringField('Mã vụ việc', validators=[DataRequired(), Length(max=50)])
+    received_date = DateField('Ngày tiếp nhận', format='%Y-%m-%d', validators=[DataRequired()])
+    officer_name = StringField('Cán bộ tiếp nhận', validators=[DataRequired(), Length(max=150)])
     title = StringField('Tiêu đề', validators=[DataRequired(), Length(max=200)])
     content = TextAreaField('Nội dung', validators=[DataRequired()])
-    informant_name = StringField('Tên người cung cấp thông tin', validators=[Optional(), Length(max=150)])
-    informant_address = StringField('Địa chỉ người cung cấp thông tin', validators=[Optional(), Length(max=255)])
-    informant_phone = StringField('Số điện thoại người cung cấp thông tin', validators=[Optional(), Length(max=20)])
-    informant_id_number = StringField('Số CMND người cung cấp thông tin', validators=[Optional(), Length(max=20)])
+    
+    informant_name = StringField('Công dân trình báo', validators=[Optional(), Length(max=150)])
+    informant_address = StringField('Địa chỉ công dân trình báo', validators=[Optional(), Length(max=255)])
+    informant_phone = StringField('Số điện thoại công dân trình báo', validators=[Optional(), Length(max=20)])
+    
+    status = SelectField(
+        'Tình trạng xử lý',
+        choices=[
+            ('đã tiếp nhận', 'Đã tiếp nhận'),
+            ('đang thực hiện', 'Đang thực hiện'),
+            ('đã hoàn thành', 'Đã hoàn thành')
+        ],
+        validators=[DataRequired()]
+    )
+
+    phone_numbers = TextAreaField('Danh sách SĐT liên quan', validators=[Optional()])
+    bank_accounts = TextAreaField('Danh sách tài khoản ngân hàng liên quan', validators=[Optional()])
+    ip_addresses = TextAreaField('Thông tin IP liên quan', validators=[Optional()])
+    websites_or_apps = TextAreaField('Website/Ứng dụng liên quan', validators=[Optional()])
+
     submit = SubmitField('Gửi báo cáo tội phạm')
 
 
-# ---------- INCIDENT REPORT ----------
+# ---------- BÁO CÁO VỤ VIỆC ----------
 class IncidentReportForm(FlaskForm):
-    incident_name = StringField('Tên sự kiện', validators=[DataRequired(), Length(max=200)])
-    description = TextAreaField('Mô tả', validators=[DataRequired()])
-    incident_time = DateTimeField('Thời gian sự kiện', format='%Y-%m-%d %H:%M:%S', validators=[Optional()])
-    related_persons = TextAreaField('Người liên quan', validators=[Optional()])
+    file_number = StringField('Số hồ sơ', validators=[DataRequired(), Length(max=50)])
+    incident_time = DateTimeField('Thời gian xảy ra', format='%Y-%m-%d %H:%M:%S', validators=[Optional()])
+    
+    incident_name = StringField('Tên vụ việc', validators=[DataRequired(), Length(max=200)])
+    description = TextAreaField('Nội dung vụ việc', validators=[DataRequired()])
+    
+    officer_name = StringField('Cán bộ đăng ký', validators=[DataRequired(), Length(max=150)])
+    
+    status = SelectField(
+        'Tình trạng xử lý',
+        choices=[
+            ('đã tiếp nhận', 'Đã tiếp nhận'),
+            ('đang thực hiện', 'Đang thực hiện'),
+            ('đã hoàn thành', 'Đã hoàn thành')
+        ],
+        validators=[DataRequired()]
+    )
+    
+    related_persons = TextAreaField('Người liên quan (mỗi người cách nhau bởi dấu phẩy)', validators=[Optional()])
+    storage_number = StringField('Số lưu hồ sơ', validators=[Optional(), Length(max=100)])
+    archived_date = DateField('Ngày nộp lưu', format='%Y-%m-%d', validators=[Optional()])
+    
     submit = SubmitField('Gửi báo cáo sự kiện')
 
 
-# ---------- GROUP REPORT ----------
+# ---------- BÁO CÁO NHÓM TỘI PHẠM ----------
 class CrimeGroupReportForm(FlaskForm):
     platform = StringField('Nền tảng', validators=[DataRequired(), Length(max=100)])
     group_name = StringField('Tên nhóm', validators=[DataRequired(), Length(max=200)])
     group_link = StringField('Link nhóm', validators=[Optional(), Length(max=255)])
     group_created_at = DateTimeField('Ngày tạo nhóm', format='%Y-%m-%d', validators=[Optional()])
     admin_info = TextAreaField('Thông tin quản trị viên', validators=[Optional()])
+    
+    member_count = IntegerField('Số lượng thành viên', validators=[Optional(), NumberRange(min=0)])
+    weekly_post_count = IntegerField('Số lượng bài tin trung bình mỗi tuần', validators=[Optional(), NumberRange(min=0)])
+    status = SelectField(
+        'Tình trạng xử lý',
+        choices=[
+            ('đã tiếp nhận', 'Đã tiếp nhận'),
+            ('đang thực hiện', 'Đang thực hiện'),
+            ('đã hoàn thành', 'Đã hoàn thành')
+        ],
+        validators=[DataRequired()]
+    )
+    assigned_officer = StringField('Cán bộ phụ trách theo dõi', validators=[Optional(), Length(max=150)])
+
     purpose = TextAreaField('Mục đích', validators=[Optional()])
     impact_level = SelectField('Mức độ tác động', coerce=int, validators=[Optional()])
     description = TextAreaField('Mô tả', validators=[DataRequired()])
-    notes = TextAreaField('Ghi chú', validators=[Optional()])
+    
     submit = SubmitField('Gửi báo cáo nhóm')
 
 
-# ---------- DATA EXTRACTION REQUEST ----------
+# ---------- YÊU CẦU TRÍCH XUẤT DỮ LIỆU ----------
 class DataExtractionForm(FlaskForm):
-    request_number = StringField('Mã yêu cầu', validators=[DataRequired(), Length(max=50)])
-    sender_id = SelectField('Người gửi (Người dùng)', coerce=int, validators=[DataRequired()])
-    unit_id = SelectField('Đơn vị', coerce=int, validators=[DataRequired()])
-    result_date = DateTimeField('Ngày kết quả', format='%Y-%m-%d', validators=[Optional()])
+    request_number = StringField('Số yêu cầu', validators=[DataRequired(), Length(max=50)])
+    sent_date = DateTimeField('Ngày gửi', format='%Y-%m-%d', validators=[DataRequired()])
+    result_date = DateTimeField('Ngày trả kết quả', format='%Y-%m-%d', validators=[Optional()])
+    
+    sender_id = SelectField('Người gửi', coerce=int, validators=[DataRequired()])
+    
+    unit_id = SelectField('Đơn vị tiếp nhận', coerce=int, validators=[DataRequired()])
     device_type = StringField('Loại thiết bị', validators=[DataRequired(), Length(max=100)])
     device_info = TextAreaField('Thông tin thiết bị', validators=[DataRequired()])
+    
     extraction_request = TextAreaField('Yêu cầu trích xuất', validators=[DataRequired()])
     extraction_result = TextAreaField('Kết quả trích xuất', validators=[Optional()])
+    status = SelectField(
+        'Tình trạng xử lý',
+        choices=[
+            ('đã tiếp nhận', 'Đã tiếp nhận'),
+            ('đang thực hiện', 'Đang thực hiện'),
+            ('đã hoàn thành', 'Đã hoàn thành')
+        ],
+        validators=[DataRequired()]
+    )
+    receiving_officer = StringField('Cán bộ tiếp nhận', validators=[Optional(), Length(max=150)])
     notes = TextAreaField('Ghi chú', validators=[Optional()])
+    
     submit = SubmitField('Gửi yêu cầu trích xuất')
 
 
-# ---------- ATTACHMENT ----------
+# ---------- TỆP ĐÍNH KÈM ----------
 class AttachmentForm(FlaskForm):
     report_type = SelectField('Loại báo cáo', choices=[
         ('CrimeReport', 'Báo cáo tội phạm'),
@@ -98,8 +164,3 @@ class AttachmentForm(FlaskForm):
     file_name = StringField('Tên tệp', validators=[Optional(), Length(max=200)])
     submit = SubmitField('Tải lên tệp')
 
-
-# ---------- CHECK INFO ----------
-class CheckInfoForm(FlaskForm):
-    contact_info = StringField('Email hoặc Số điện thoại', validators=[DataRequired(), Length(max=150)])
-    submit = SubmitField('Kiểm tra')

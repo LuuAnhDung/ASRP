@@ -1,7 +1,7 @@
 from flask import render_template, Blueprint, flash, redirect, url_for
 from . import main_bp
-from ...forms import CheckInfoForm
-from ...models import LeakedInfo
+# from ...forms import CheckInfoForm
+# from ...models import LeakedInfo
 
 @main_bp.route('/')
 def index():

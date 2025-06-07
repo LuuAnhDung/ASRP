@@ -1,136 +1,279 @@
 {% extends "base.html" %}
+
 {% block content %}
 
 <style>
-    .container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 2rem;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h2 {
-        margin-bottom: 1.5rem;
-        text-align: center;
-    }
-    .form-group {
-        margin-bottom: 1.2rem;
-    }
-    .form-label {
-        font-weight: bold;
-        display: block;
-        margin-bottom: 0.5rem;
-    }
-    .form-control {
-        width: 100%;
-        padding: 0.6rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-    .form-control:focus {
-        border-color: #007bff;
-        outline: none;
-    }
-    .btn-primary {
-        background-color: #007bff;
-        border: none;
-        padding: 0.6rem 1.2rem;
-        color: #fff;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    .btn-primary:hover {
-        background-color: #0056b3;
-    }
-    .text-danger {
-        font-size: 0.875rem;
-        color: red;
-        margin-top: 0.25rem;
-    }
+  .report-form-wrapper {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      font-family: Arial, sans-serif;
+  }
+  .form-header {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: #010204;
+    margin-bottom: 2rem;
+    /* border-bottom: 2px solid #070a0c; */
+    padding-bottom: 0.3rem;
+    /* letter-spacing: 1px; */
+    user-select: none;
+  }
+
+  form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem 2rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label.form-label {
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+
+  input.form-control,
+  select.form-control,
+  textarea.form-control {
+    padding: 0.5rem 0.7rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+  }
+
+  input.form-control:focus,
+  select.form-control:focus,
+  textarea.form-control:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+
+  .text-danger {
+    color: #d93025;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+  }
+
+  .full-width {
+    grid-column: 1 / -1;
+  }
+
+  .btn-primary {
+    grid-column: 1 / -1;
+    background-color: #007bff;
+    border: none;
+    padding: 0.7rem 1.3rem;
+    font-size: 1.1rem;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    justify-self: start;
+    margin-bottom: 2rem;
+  }
+
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2.5rem;
+    font-size: 0.95rem;
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+  }
+
+  .action-btn {
+    padding: 0.3rem 0.7rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-right: 0.4rem;
+    color: #fff;
+    display: inline-block;
+  }
+
+  .btn-edit {
+    background-color: #28a745;
+  }
+  .btn-edit:hover {
+    background-color: #218838;
+  }
+  .btn-delete {
+    background-color: #dc3545;
+  }
+  .btn-delete:hover {
+    background-color: #c82333;
+  }
 </style>
 
-<div class="container">
-    <h2>Báo Cáo Nhóm Tội Phạm</h2>
-    <form method="POST">
-        {{ form.hidden_tag() }}
+<div class="report-form-wrapper">
+  <h2 class="form-header">GỬI BÁO CÁO THÔNG TIN HỘI NHÓM TỘI PHẠM</h2>
 
-        <div class="form-group">
-            <label class="form-label">{{ form.platform.label }}</label>
-            {{ form.platform(class="form-control") }}
-            {% for error in form.platform.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div>
+  <form method="POST" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
 
-        <div class="form-group">
-            <label class="form-label">{{ form.group_name.label }}</label>
-            {{ form.group_name(class="form-control") }}
-            {% for error in form.group_name.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div>
+    <div class="form-group">
+      {{ form.platform.label(class="form-label") }}
+      {{ form.platform(class="form-control") }}
+      {% for error in form.platform.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
 
-        <div class="form-group">
-            <label class="form-label">{{ form.group_url.label }}</label>
-            {{ form.group_url(class="form-control") }}
-            {% for error in form.group_url.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div>
+    <div class="form-group">
+      {{ form.group_name.label(class="form-label") }}
+      {{ form.group_name(class="form-control") }}
+      {% for error in form.group_name.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
 
-        <div class="form-group">
-            <label class="form-label">{{ form.created_at.label }}</label>
-            {{ form.created_at(class="form-control") }}
-            {% for error in form.created_at.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div>
+    <div class="form-group">
+      {{ form.group_url.label(class="form-label") }}
+      {{ form.group_url(class="form-control") }}
+      {% for error in form.group_url.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
 
-        <div class="form-group">
-            <label class="form-label">{{ form.admin_info.label }}</label>
-            {{ form.admin_info(rows="3", class="form-control") }}
-            {% for error in form.admin_info.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div>
+    <div class="form-group">
+      {{ form.created_at.label(class="form-label") }}
+      {{ form.created_at(class="form-control") }}
+      {% for error in form.created_at.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
 
-        <div class="form-group">
-            <label class="form-label">{{ form.purpose.label }}</label>
-            {{ form.purpose(rows="3", class="form-control") }}
-            {% for error in form.purpose.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div>
+    <div class="form-group">
+      {{ form.member_count.label(class="form-label") }}
+      {{ form.member_count(class="form-control") }}
+      {% for error in form.member_count.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
 
-        <div class="form-group">
-            <label class="form-label">{{ form.impact_level.label }}</label>
-            {{ form.impact_level(class="form-control") }}
-            {% for error in form.impact_level.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div>
+    <div class="form-group">
+      {{ form.weekly_post_count.label(class="form-label") }}
+      {{ form.weekly_post_count(class="form-control") }}
+      {% for error in form.weekly_post_count.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
 
-        <div class="form-group">
-            <label class="form-label">{{ form.description.label }}</label>
-            {{ form.description(rows="4", class="form-control") }}
-            {% for error in form.description.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div>
+    <div class="form-group">
+      {{ form.status.label(class="form-label") }}
+      {{ form.status(class="form-control") }}
+      {% for error in form.status.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
 
-        <div class="form-group">
-            <label class="form-label">{{ form.note.label }}</label>
-            {{ form.note(rows="2", class="form-control") }}
-            {% for error in form.note.errors %}
-                <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-        </div>
+    <div class="form-group">
+      {{ form.assigned_officer.label(class="form-label") }}
+      {{ form.assigned_officer(class="form-control") }}
+      {% for error in form.assigned_officer.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
 
-        <div class="form-group">
-            {{ form.submit(class="btn btn-primary") }}
-        </div>
-    </form>
+    <div class="form-group full-width">
+      {{ form.admin_info.label(class="form-label") }}
+      {{ form.admin_info(class="form-control", rows="2") }}
+      {% for error in form.admin_info.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="form-group full-width">
+      {{ form.purpose.label(class="form-label") }}
+      {{ form.purpose(class="form-control", rows="2") }}
+      {% for error in form.purpose.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="form-group full-width">
+      {{ form.description.label(class="form-label") }}
+      {{ form.description(class="form-control", rows="3") }}
+      {% for error in form.description.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="form-group full-width">
+      {{ form.note.label(class="form-label") }}
+      {{ form.note(class="form-control", rows="2") }}
+      {% for error in form.note.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="form-group full-width">
+      {{ form.attachments.label(class="form-label") }}
+      {{ form.attachments(class="form-control", multiple=True) }}
+      {% for error in form.attachments.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="form-group">
+      {{ form.submit(class="btn-primary") }}
+    </div>
+  </form>
+
+  <h3>DANH SÁCH BÁO CÁO THÔNG TIN HỘI NHÓM TỘI PHẠM</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nền tảng</th>
+          <th>Tên nhóm</th>
+          <th>Ngày tạo</th>
+          <th>Người phụ trách</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for report in reports %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ report.platform }}</td>
+          <td>{{ report.group_name }}</td>
+          <td>{{ report.created_at.strftime('%d/%m/%Y') if report.created_at }}</td>
+          <td>{{ report.assigned_officer }}</td>
+          <td>
+            <a href="{{ url_for('report.group.edit_group_report', id=report.id) }}" class="action-btn btn-edit">Sửa</a>
+            <a href="{{ url_for('report.group.delete_group_report', id=report.id) }}" class="action-btn btn-delete" onclick="return confirm('Bạn có chắc muốn xoá?');">Xoá</a>
+          </td>
+        </tr>
+        {% else %}
+           <tr>
+                <td colspan="7" style="text-align:center;">Chưa có báo cáo nào.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 </div>
 
 {% endblock %}

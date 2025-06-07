@@ -1,188 +1,258 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    .container {
-        max-width: 1200px;
+  .container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 1rem;
+  }
+  h2 {
+    text-align: center;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Form lọc & xuất */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .controls .filter, .controls .export {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    align-items: flex-end;
+  }
+  .controls label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #34495e;
+    display: block;
+  }
+  .controls input[type="date"], .controls select {
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+    padding: 8px 10px;
+    font-size: 1rem;
+    width: 160px;
+  }
+  .controls button {
+    padding: 9px 24px;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    border: none;
+    font-size: 1rem;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+  .controls .filter button {
+    background: #0d6efd;
+    color: #fff;
+  }
+  .controls .filter button:hover {
+    background: #084cd9;
+  }
+  .controls .export button {
+    background: #198754;
+    color: #fff;
+  }
+  .controls .export button:hover {
+    background: #146c43;
+  }
+
+  /* Bảng báo cáo */
+  .report-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+  .report-table thead {
+    background: #0d6efd;
+    color: #fff;
+    font-weight: 600;
+  }
+  .report-table th,
+  .report-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: middle;
+  }
+  .report-table tbody tr:hover {
+    background: #f0f7ff;
+  }
+  .report-table th:nth-child(1),
+  .report-table td:nth-child(1) { width: 50px; text-align: center; }
+  .report-table th:nth-child(2),
+  .report-table td:nth-child(2) { width: 280px; }
+  .report-table th:nth-child(3),
+  .report-table td:nth-child(3) { width: 150px; }
+  .report-table th:nth-child(4),
+  .report-table td:nth-child(4) { width: 180px; }
+  .report-table th:nth-child(5),
+  .report-table td:nth-child(5) { width: 120px; }
+  .report-table th:nth-child(6),
+  .report-table td:nth-child(6) { width: 180px; }
+  .report-table th:nth-child(7),
+  .report-table td:nth-child(7) { width: 130px; text-align: center; }
+  .report-table th:nth-child(8),
+  .report-table td:nth-child(8) { width: 100px; text-align: center; }
+
+  /* Trạng thái */
+  .status-label {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 16px;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .status-label.open   { background: #0dcaf0; }
+  .status-label.closed { background: #198754; }
+
+  /* Icon tải tệp */
+  .btn-attach {
+    font-size: 1.2rem;
+    color: #0d6efd;
+    text-decoration: none;
+    transition: color .2s;
+  }
+  .btn-attach:hover {
+    color: #084cd9;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .controls { flex-direction: column; }
+    .controls .filter, .controls .export {
+      flex-direction: column;
+      align-items: stretch;
     }
-
-    h2 {
-        font-weight: bold;
-        color: #2c3e50;
+    .controls input[type="date"], .controls select, .controls button {
+      width: 100%;
     }
-
-    .form-group label {
-        font-weight: 600;
+    .report-table thead { display: none; }
+    .report-table, .report-table tbody, .report-table tr, .report-table td {
+      display: block; width: 100%;
     }
-
-    .form-control {
-        border-radius: 0.5rem;
-        border: 1px solid #ccc;
+    .report-table tr {
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fff;
     }
-
-    .btn-primary, .btn-success {
-        padding: 8px 20px;
-        font-weight: 600;
-        border-radius: 0.5rem;
-        transition: all 0.2s ease-in-out;
+    .report-table td {
+      position: relative;
+      padding-left: 50%;
+      border: none;
+      text-align: left;
     }
-
-    .btn-primary:hover {
-        background-color: #0056b3;
+    .report-table td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 15px;
+      font-weight: 600;
+      color: #555;
     }
-
-    .btn-success:hover {
-        background-color: #218838;
-    }
-
-    .statistics-table {
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        overflow-x: auto;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    }
-
-    .table-row {
-        display: flex;
-        flex-wrap: nowrap;
-        border-bottom: 1px solid #eee;
-        padding: 12px 10px;
-        align-items: center;
-    }
-
-    .table-row.header {
-        background-color: #f8f9fa;
-        font-weight: bold;
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
-    }
-
-    .column {
-        padding: 5px 10px;
-        font-size: 0.9rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .index { width: 60px; text-align: center; }
-    .title { width: 200px; }
-    .comment { width: 120px; }
-    .module { width: 100px; }
-    .reporter { width: 140px; }
-    .status { width: 100px; }
-    .owner { width: 120px; }
-    .severity { width: 100px; text-align: center; }
-    .watch, .add-comment { width: 40px; text-align: center; }
-    .date { width: 120px; }
-
-    .label.label-primary {
-        background-color: #007bff;
-        padding: 5px 10px;
-        border-radius: 15px;
-        color: #fff;
-        font-size: 0.8rem;
-    }
-
-    @media (max-width: 768px) {
-        .table-row {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .column {
-            width: 100% !important;
-        }
-
-        .statistics-table {
-            font-size: 0.85rem;
-        }
-    }
+  }
 </style>
 
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Thống kê Báo Cáo</h2>
+<div class="container">
+  <h2>Thống kê Báo Cáo</h2>
 
-    <!-- Form tìm kiếm và xuất báo cáo -->
-<form method="GET" action="{{ url_for('report.report_statistics') }}">
-    <label for="start_date">Ngày bắt đầu:</label>
-    <input type="date" id="start_date" name="start_date">
+  <div class="controls">
+    <!-- Form lọc -->
+    <form class="filter" method="GET" action="{{ url_for('report.report_statistics') }}">
+      <div>
+        <label for="start_date">Ngày bắt đầu</label>
+        <input type="date" id="start_date" name="start_date" value="{{ request.args.get('start_date','') }}">
+      </div>
+      <div>
+        <label for="end_date">Ngày kết thúc</label>
+        <input type="date" id="end_date" name="end_date" value="{{ request.args.get('end_date','') }}">
+      </div>
+      <div>
+        <label for="status">Trạng thái</label>
+        <select id="status" name="status">
+          <option value="" {% if not request.args.get('status') %}selected{% endif %}>Tất cả</option>
+          <option value="Open" {% if request.args.get('status')=='Open' %}selected{% endif %}>Mở</option>
+          <option value="Closed" {% if request.args.get('status')=='Closed' %}selected{% endif %}>Đã đóng</option>
+        </select>
+      </div>
+      <button type="submit">Lọc</button>
+    </form>
 
-    <label for="end_date">Ngày kết thúc:</label>
-    <input type="date" id="end_date" name="end_date">
+    <!-- Form xuất Excel -->
+    <form class="export" method="GET" action="{{ url_for('report.export_reports') }}">
+      <input type="hidden" name="start_date" value="{{ request.args.get('start_date','') }}">
+      <input type="hidden" name="end_date"   value="{{ request.args.get('end_date','') }}">
+      <input type="hidden" name="status"     value="{{ request.args.get('status','') }}">
+      <button type="submit">Xuất Excel</button>
+    </form>
+  </div>
 
-    <label for="status">Trạng thái:</label>
-    <select id="status" name="status">
-        <option value="Open">Mở</option>
-        <option value="Closed">Đã đóng</option>
-    </select>
-
-    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-</form>
-
-<!-- Form xuất báo cáo -->
-<form method="POST" action="{{ url_for('report.export_reports') }}">
-    <input type="hidden" name="start_date" value="{{ request.args.get('start_date') }}">
-    <input type="hidden" name="end_date" value="{{ request.args.get('end_date') }}">
-    <input type="hidden" name="status" value="{{ request.args.get('status') }}">
-    <button type="submit" class="btn btn-success">Xuất Excel</button>
-</form>
-
-
-    <!-- Bảng thống kê -->
-    <div class="statistics-table mt-3">
-        <div class="table-row header">
-            <div class="column index">Stt</div>
-            <div class="column title">Tiêu đề</div>
-            <div class="column comment">Danh mục</div>
-            <div class="column module">Khu vực</div>
-            <div class="column reporter">Người báo cáo</div>
-            <div class="column status">Trạng thái</div>
-            <div class="column owner">Chủ sở hữu</div>
-            <div class="column severity">Mức độ</div>
-            <!-- <div class="column watch" title="Xem"><span class="glyphicon glyphicon-eye-open"></span></div>
-            <div class="column add-comment" title="Thêm bình luận"><span class="glyphicon glyphicon-comment"></span></div> -->
-            <div class="column date">Tạo</div>
-            <div class="column date">Hạn chót</div>
-        </div>
-
-        {% for report in reports %}
-        <div class="table-row">
-            <div class="column index">{{ loop.index }}</div>
-            <div class="column title">
-                {% if report.crime_report %}
-                    {{ report.crime_report.title }}
-                {% elif report.incident_report %}
-                    {{ report.incident_report.incident_name }}
-                {% elif report.group_report %}
-                    {{ report.group_report.group_name }}
-                {% elif report.extraction_request %}
-                    Yêu cầu số: {{ report.extraction_request.request_number }}
-                {% else %}
-                    Không có tiêu đề
-                {% endif %}
-            </div>
-            <div class="column comment">{{ report.category.name }}</div>
-            <div class="column module">{{ report.region.name }}</div>
-            <div class="column reporter">{{ report.user.full_name }}</div>
-            <div class="column status">
-                <span class="label label-primary">{{ report.status.name }}</span>
-            </div>
-            <div class="column owner">{{ report.user.full_name }}</div>
-            <div class="column severity">{{ report.group_report.impact_level }}</div>
-            <!-- <div class="column watch">
-                <span class="glyphicon glyphicon-eye-open"></span>
-            </div>
-            <div class="column add-comment">
-                <span class="glyphicon glyphicon-comment"></span>
-            </div> -->
-            <div class="column date">{{ report.created_at.strftime('%b-%d, %Y') }}</div>
-            <div class="column date">
-                {{ report.due_date.strftime('%b-%d, %Y') if report.due_date else 'N/A' }}
-            </div>
-        </div>
-        {% endfor %}
-    </div>
+  <!-- Bảng báo cáo -->
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th>Stt</th>
+        <th>Tiêu đề</th>
+        <th>Danh mục</th>
+        <th>Người báo cáo</th>
+        <!-- <th>Trạng thái</th> -->
+        <th>Chủ sở hữu</th>
+        <th>Ngày tạo</th>
+        <th>File</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for report in reports %}
+      <tr>
+        <td data-label="Stt">{{ loop.index }}</td>
+        <td data-label="Tiêu đề" title="{% if report.crime_report %}{{ report.crime_report.title }}{% elif report.incident_report %}{{ report.incident_report.incident_name }}{% elif report.group_report %}{{ report.group_report.group_name }}{% elif report.extraction_request %}Yêu cầu số {{ report.extraction_request.request_number }}{% else %}Không có{% endif %}">
+          {% if report.crime_report %}
+            {{ report.crime_report.title }}
+          {% elif report.incident_report %}
+            {{ report.incident_report.incident_name }}
+          {% elif report.group_report %}
+            {{ report.group_report.group_name }}
+          {% elif report.extraction_request %}
+            Yêu cầu số {{ report.extraction_request.request_number }}
+          {% else %}
+            Không có tiêu đề
+          {% endif %}
+        </td>
+        <td data-label="Danh mục">{{ report.category.name }}</td>
+        <td data-label="Người báo cáo">{{ report.user.full_name }}</td>
+        <!-- <td data-label="Trạng thái">
+          <span class="status-label {{ report.status.name|lower }}">{{ report.status.name }}</span>
+        </td> -->
+        <td data-label="Chủ sở hữu">{{ report.user.full_name }}</td>
+        <td data-label="Ngày tạo">{{ report.created_at.strftime('%d-%m-%Y') }}</td>
+        <td data-label="File">
+          {% if report.attachments %}
+            <a href="{{ url_for('report.views.download_attachment', id=report.id) }}" class="btn-attach" title="Tải tệp đính kèm">📎</a>
+          {% else %}
+            –
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="8" style="text-align:center; color:#666; font-style:italic;">
+          Không có báo cáo nào.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 {% endblock %}
-
